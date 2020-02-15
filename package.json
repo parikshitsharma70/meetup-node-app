@@ -1,0 +1,31 @@
+{
+  "name": "meetup-node-app",
+  "version": "1.0.0",
+  "description": "Meetups webapp implementation in Node.js",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --ignore 'files/*' app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parikshitsharma70/meetup-node-app.git"
+  },
+  "author": "Parikshit Sharma",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/parikshitsharma70/meetup-node-app/issues"
+  },
+  "homepage": "https://github.com/parikshitsharma70/meetup-node-app#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.1",
+    "morgan-body": "^2.4.8",
+    "nodemon": "^2.0.2",
+    "request": "^2.88.2"
+  }
+}
