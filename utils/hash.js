@@ -23,11 +23,11 @@ module.exports.comparePassword = async function(plainPass, hashword) {
   });
 }
 
-module.exports.hashProjectId = async function(projectCount){
+module.exports.hashMeetupId = async function(string){
   return new Promise((resolve, reject)=>{
-    var hashedProjectId = crypto.createHash('md5').update(projectCount.toString()).digest('hex')
-    if(hashedProjectId) resolve(hashedProjectId)
-    else reject('Error in hashing Project ID')
+    var hashedMeetupId = crypto.createHash('md5').update(string.toString()).digest('hex')
+    if(hashedMeetupId) resolve(hashedMeetupId)
+    else reject('Error in hashing Meetup ID')
   })
 }
 

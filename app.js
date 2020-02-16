@@ -54,6 +54,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
     /* All routes to be defined here */
     require('./routes/auth')(app);
+    require('./routes/meetup')(app);
 })();
 
 

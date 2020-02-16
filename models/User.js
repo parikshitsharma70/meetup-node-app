@@ -3,15 +3,15 @@ var mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    username :  String,
-    password :  String,
-    firstName : String,
-    lastName : String,
-    email : String,
-    city : String,
-    state : String,
-    role :  String,
-    lastLogin : String 
+        username :  String,
+        password :  String,
+        firstName : String,
+        lastName : String,
+        email : String,
+        city : String,
+        state : String,
+        role :  String,
+        lastLogin : String 
     })
 
 var User =  mongoose.model('user', userSchema);
@@ -22,7 +22,7 @@ userSchema.pre('save', function(next){
 
 module.exports.createUser = async function(user){
     return new Promise(async (resolve, reject)=>{
-        var find_clause = { 'ldap' : user.ldap }
+        var find_clause = { 'username' : user.username }
         var found = await User.findUser(find_clause)
         if(!found){
             user.save(user, (err, res)=> {
@@ -49,6 +49,11 @@ module.exports.findUser = async function(find_clause){
             } else reject(err);
         })
     })
+}
+
+module.exports.findUserByUsername = async function(username){
+    var user = await User.findOne({'username': username})
+    return user
 }
 
 module.exports.getUserRole = async function(find_clause){
