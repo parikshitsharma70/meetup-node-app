@@ -7,13 +7,15 @@ const meetupSchema = new Schema({
         meetupId : String,
         title :  String,
         description : String,
-        invited : Array,
+        invited : [{
+            type: String
+        }],
         street : String,
         city : String,
         state : String,
-        date : Date,
-        startTime : String,
-        duration : String
+        datetime : Date,
+        duration : String,
+        createdAt : Date
     })
 
 var Meetup =  mongoose.model('meetup', meetupSchema);

@@ -1,16 +1,14 @@
 # Meetup Internal API Docs
 
-All endpoints are currently post unless mentioned as GET
-
 All routes are protected by jwt which can be obtained from /client/login or /admin/login
-Client jwt gives access to /client and /transaction endpoints
+Client jwt gives access to /client and /meetup endpoints
 Admin jwt gives access to /admin endpoints
 
 
 # Client
 
 ## - /client/signUp
-
+    POST
         Send : 
             - username as req.body.username
             - password as req.body.password
@@ -24,10 +22,42 @@ Admin jwt gives access to /admin endpoints
             Confirmation for saved user      
 
 ## - /client/login
-
+    POST
         Send :
             - username as req.body.username
             - password as req.body.password
 
         Receive : 
             Login success message and JWT 
+
+# Meetup
+
+## - /meetup/create
+    POST
+        Send : 
+            - username as req.body.username
+            - title as req.body.title
+            - description as req.body.description
+            - invited as req.body.invited (comma separated string)
+            - street as req.body.street
+            - city as req.body.city
+            - state as req.body.state
+            - datetime as req.body.datetime
+            - duration as req.body.duration
+
+        Receive : 
+            Confirmation for meetup created
+
+## - /meetup/listByUsername
+    GET
+        Send :
+            - username as req.body.meetup
+
+        Receive :
+            List of meetups created by user
+
+## - /meetup/listByLocation
+    GET
+        Send :
+            - city as req.body.city
+            - 

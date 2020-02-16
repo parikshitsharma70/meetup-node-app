@@ -19,7 +19,7 @@ module.exports = function(app){
         check('state')
             .not()
             .isEmpty(),
-        check('date')
+        check('datetime')
             .not()
             .isEmpty() 
         ], async(req, res)=>{
@@ -28,18 +28,18 @@ module.exports = function(app){
                 return res.status(422).json({ errors: errors.array() });
             }
             else {
+                console.log(typeof(req.body.invited))
                 var username = req.body.username
                 var title = req.body.title
                 var description = req.body.description
-                var invited = req.body.invited
+                var invited = req.body.invited.split(',')
                 var street = req.body.street
                 var city = req.body.city
                 var state = req.body.state
-                var date = req.body.date
-                var startTime = req.body.startTime
+                var datetime = req.body.datetime
                 var duration = req.body.duration
                 try{
-                    var meetupId = await hash.hashMeetupId(username+title+startTime)
+                    var meetupId = await hash.hashMeetupId(username+title+datetime)
                     
                     var meetup = new Meetup({
                         owner : username,
@@ -50,9 +50,9 @@ module.exports = function(app){
                         street : street,
                         city : city,
                         state : state,
-                        date : date,
-                        startTime : startTime,
-                        duration : duration
+                        datetime : datetime,
+                        duration : duration,
+                        createdAt : Date.now()
                     })
 
                     var result = await Meetup.createMeetup(meetup)
@@ -72,7 +72,7 @@ module.exports = function(app){
     })
 
 
-    app.get('/meetup/list', [
+    app.get('/meetup/listByUsername', [
         check('username')
             .not()
             .isEmpty(),
