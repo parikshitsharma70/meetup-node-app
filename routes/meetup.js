@@ -28,7 +28,6 @@ module.exports = function(app){
                 return res.status(422).json({ errors: errors.array() });
             }
             else {
-                console.log(typeof(req.body.invited))
                 var username = req.body.username
                 var title = req.body.title
                 var description = req.body.description
@@ -79,7 +78,7 @@ module.exports = function(app){
         ], async(req, res)=>{
             var username = req.body.username
             try{
-                Meetup.find({ owner : username, datetime : {$gte : Date.now()}}).cursor()
+                Meetup.find({ owner : username, datetime : {$gte : Date.now()}}, {_id : 0, __v : 0}).cursor()
                     .pipe(JSONStream.stringify())
                     .pipe(res.type('json'))            
             } catch(err) {
@@ -100,7 +99,7 @@ module.exports = function(app){
             var city = req.body.city
             var state = req.body.state
             try{
-                Meetup.find({ city : city, state : state, datetime : {$gte : Date.now()}}).cursor()
+                Meetup.find({ city : city, state : state, datetime : {$gte : Date.now()}}, {_id : 0, __v : 0}).cursor()
                     .pipe(JSONStream.stringify())
                     .pipe(res.type('json'))            
             } catch(err) {
@@ -116,7 +115,7 @@ module.exports = function(app){
         ], async(req, res)=>{
             var username = req.body.username
             try{
-                Meetup.find({ invited : username, datetime : {$gte : Date.now()}}).cursor()
+                Meetup.find({ invited : username, datetime : {$gte : Date.now()}}, {_id : 0, __v : 0}).cursor()
                     .pipe(JSONStream.stringify())
                     .pipe(res.type('json'))            
             } catch(err) {
@@ -124,5 +123,75 @@ module.exports = function(app){
                 res.status(500).json({'message' : 'Server error'})
             }
     })
+
+    app.post('/meetup/inviteUsers', [
+        check('meetupId')
+            .not()
+            .isEmpty(),
+        check('invitees')
+            .not()
+            .isEmpty(),
+        check('username')
+            .not()
+            .isEmpty(),
+        ], async(req, res)=>{
+            var meetupId = req.body.meetupId
+            var invitees = req.body.invitees.split(',').map(s => s.trim())
+            var username = req.body.username
+            try{
+                var meetup = await Meetup.findOne({meetupId : meetupId, owner : username}).exec()
+                console.log(meetup)
+                if(!meetup){
+                    res.status(401).json({'message' : 'You are not the owner of this meetup'})
+                }
+                else{
+                    for(var invitee in invitees){
+                        meetup.invited.push(invitees[invitee])
+                    }
+                    meetup.save()
+                    res.status(200).json({'message' : 'The users have been invited'})
+                }
+
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+        })
+
+    app.post('/meetup/respondInvitation', [
+        check('meetupId')
+            .not()
+            .isEmpty(),
+        check('response')
+            .not()
+            .isEmpty(),
+        check('username')
+            .not()
+            .isEmpty(),
+        ], async(req, res)=>{
+            var meetupId = req.body.meetupId
+            var response = req.body.response
+            var username = req.body.username
+            try{
+                var meetup = await Meetup.findOne({'meetupId' : meetupId}).exec()
+                console.log(meetup)
+                if(!meetup){
+                    res.status(401).json({'message' : 'You are not invited to the meetup'})
+                }
+                else{
+                    var index = meetup.invited.indexOf(username)
+                    meetup.invited.splice(index, 1)
+                    if (response == "Yes") meetup.going.push(username)
+                    else if(response == "No") meetup.notGoing.push(username)
+                    else if(response == "Maybe") meetup.maybe.push(username)
+                    meetup.save()
+                    res.status(200).json({'message' : 'Your response has been recorded'})
+                }
+
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+        })
 
 }

@@ -5,9 +5,9 @@ Client jwt gives access to /client and /meetup endpoints
 Admin jwt gives access to /admin endpoints
 
 
-# Client
+# User
 
-## - /client/signUp
+## - /user/signUp
     POST
         Send : 
             - username as req.body.username
@@ -21,7 +21,7 @@ Admin jwt gives access to /admin endpoints
         Receive : 
             Confirmation for saved user      
 
-## - /client/login
+## - /user/login
     POST
         Send :
             - username as req.body.username
@@ -72,3 +72,25 @@ Admin jwt gives access to /admin endpoints
 
         Receive :
             List of meetups invited to
+
+## - /meetup/inviteUsers
+    POST
+        Send :
+            - username as req.body.username
+            - meetupId as req.body.meetupId
+            - invitees as req.body.invitees (comma separated string)
+
+        Receive :
+            Confirmation of users invited
+
+## - /meetup/respondInvitation
+    POST
+        Send :
+            - username as req.body.username
+            - meetupId as req.body.meetupId
+            - response as req.body.response (Yes/No/Maybe)
+
+        Receive :
+            Confirmation of response to invitation
+
+

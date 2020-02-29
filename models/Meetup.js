@@ -10,6 +10,15 @@ const meetupSchema = new Schema({
         invited : [{
             type: String
         }],
+        going : [{
+            type: String
+        }],
+        notGoing : [{
+            type: String
+        }],
+        maybe : [{
+            type: String
+        }],
         street : String,
         city : String,
         state : String,

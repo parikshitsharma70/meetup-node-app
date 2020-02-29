@@ -4,7 +4,7 @@ var jwt = require('jsonwebtoken')
 const {check, validationResult} = require('express-validator')
 
 module.exports = function(app){
-    app.post('/client/login', [
+    app.post('/user/login', [
         check('username')
             .not()
             .isEmpty(),
@@ -46,7 +46,7 @@ module.exports = function(app){
             }
     })
 
-    app.post('/client/signUp', [
+    app.post('/user/signUp', [
         check('email')
             .isEmail()
             .normalizeEmail(),

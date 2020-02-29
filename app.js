@@ -70,6 +70,29 @@ else{
         require('./routes/meetup')(app);
     })();
 
+    process.on('SIGINT', function () {
+        mongoose.connection.close(function () {
+            console.log("### Connection to otomashen database closed - API Terminated SIGINT!");
+            process.exit(0);
+        });
+    });
+    
+    process.on("unhandledRejection", function (err) {
+        console.log("!#! unhandledRejection ERROR - " + err);
+    });
+    
+    process.on('uncaughtException', function (err) {
+        console.log("!#! Caught exception: ", err);
+    });
+    
+    process.on("TypeError", function (err) {
+        console.log("!#! TypeError ERROR - " + err);
+    });
+
+    function haltOnTimedout (req, res, next) {
+        if (!req.timedout) next()
+    }
+
 
     /* Port for app to listen on */
     app.listen(app.config.APP_PORT, function () {
