@@ -30,11 +30,3 @@ module.exports.hashMeetupId = async function(string){
     else reject('Error in hashing Meetup ID')
   })
 }
-
-module.exports.hashFileId = async function (fileTag){
-    return new Promise((resolve, reject)=>{
-        var hashedFileId = crypto.createHash('md5').update(fileTag.toString()).digest('hex')
-        if(hashedFileId) resolve(hashedFileId)
-        else reject('Error in hashing File ID')
-      })
-}

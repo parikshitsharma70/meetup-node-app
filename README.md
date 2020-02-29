@@ -51,7 +51,7 @@ Admin jwt gives access to /admin endpoints
 ## - /meetup/listByUsername
     GET
         Send :
-            - username as req.body.meetup
+            - username as req.body.username
 
         Receive :
             List of meetups created by user
@@ -60,4 +60,15 @@ Admin jwt gives access to /admin endpoints
     GET
         Send :
             - city as req.body.city
-            - 
+            - state as req.body.state
+        
+        Receive :
+            List of meetups in city selected
+
+## - /meetup/listByInvitation
+    GET
+        Send :
+            - username as req.body.username
+
+        Receive :
+            List of meetups invited to

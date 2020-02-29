@@ -32,7 +32,7 @@ module.exports = function(app){
                 var username = req.body.username
                 var title = req.body.title
                 var description = req.body.description
-                var invited = req.body.invited.split(',')
+                var invited = req.body.invited.split(',').map(s => s.trim());
                 var street = req.body.street
                 var city = req.body.city
                 var state = req.body.state
@@ -75,14 +75,11 @@ module.exports = function(app){
     app.get('/meetup/listByUsername', [
         check('username')
             .not()
-            .isEmpty(),
-        check('password')
-            .not()
             .isEmpty() 
         ], async(req, res)=>{
-            var username = req.params.username
+            var username = req.body.username
             try{
-                Meetup.find({ username : username}).cursor()
+                Meetup.find({ owner : username, datetime : {$gte : Date.now()}}).cursor()
                     .pipe(JSONStream.stringify())
                     .pipe(res.type('json'))            
             } catch(err) {
@@ -90,4 +87,42 @@ module.exports = function(app){
                 res.status(500).json({'message' : 'Server error'})
             }
     })
+
+
+    app.get('/meetup/listByLocation', [
+        check('city')
+            .not()
+            .isEmpty(),
+        check('state')
+            .not()
+            .isEmpty() 
+        ], async(req, res)=>{
+            var city = req.body.city
+            var state = req.body.state
+            try{
+                Meetup.find({ city : city, state : state, datetime : {$gte : Date.now()}}).cursor()
+                    .pipe(JSONStream.stringify())
+                    .pipe(res.type('json'))            
+            } catch(err) {
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+    })
+
+    app.get('/meetup/listByInvitation', [
+        check('username')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            var username = req.body.username
+            try{
+                Meetup.find({ invited : username, datetime : {$gte : Date.now()}}).cursor()
+                    .pipe(JSONStream.stringify())
+                    .pipe(res.type('json'))            
+            } catch(err) {
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+    })
+
 }
