@@ -10,6 +10,15 @@ const userSchema = new Schema({
         email : String,
         city : String,
         state : String,
+        friends : [{
+            type: String
+        }],
+        requestsSent : [{
+            type: String
+        }],
+        requestsReceived : [{
+            type: String
+        }],
         role :  String,
         lastLogin : String 
     })

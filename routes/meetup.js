@@ -76,6 +76,10 @@ module.exports = function(app){
             .not()
             .isEmpty() 
         ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
             var username = req.body.username
             try{
                 Meetup.find({ owner : username, datetime : {$gte : Date.now()}}, {_id : 0, __v : 0}).cursor()
@@ -96,6 +100,10 @@ module.exports = function(app){
             .not()
             .isEmpty() 
         ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
             var city = req.body.city
             var state = req.body.state
             try{
@@ -113,9 +121,33 @@ module.exports = function(app){
             .not()
             .isEmpty()
         ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
             var username = req.body.username
             try{
                 Meetup.find({ invited : username, datetime : {$gte : Date.now()}}, {_id : 0, __v : 0}).cursor()
+                    .pipe(JSONStream.stringify())
+                    .pipe(res.type('json'))            
+            } catch(err) {
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+    })
+    
+    app.get('/meetup/listUpcomingEvents', [
+        check('username')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            var username = req.body.username
+            try{
+                Meetup.find({ going : username, datetime : {$gte : Date.now()}}, {_id : 0, __v : 0}).cursor()
                     .pipe(JSONStream.stringify())
                     .pipe(res.type('json'))            
             } catch(err) {
@@ -135,12 +167,15 @@ module.exports = function(app){
             .not()
             .isEmpty(),
         ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
             var meetupId = req.body.meetupId
             var invitees = req.body.invitees.split(',').map(s => s.trim())
             var username = req.body.username
             try{
                 var meetup = await Meetup.findOne({meetupId : meetupId, owner : username}).exec()
-                console.log(meetup)
                 if(!meetup){
                     res.status(401).json({'message' : 'You are not the owner of this meetup'})
                 }
@@ -169,12 +204,15 @@ module.exports = function(app){
             .not()
             .isEmpty(),
         ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
             var meetupId = req.body.meetupId
             var response = req.body.response
             var username = req.body.username
             try{
-                var meetup = await Meetup.findOne({'meetupId' : meetupId}).exec()
-                console.log(meetup)
+                var meetup = await Meetup.findOne({meetupId : meetupId, invited : username}).exec()
                 if(!meetup){
                     res.status(401).json({'message' : 'You are not invited to the meetup'})
                 }

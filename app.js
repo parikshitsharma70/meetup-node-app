@@ -66,13 +66,13 @@ else{
         });
 
         /* All routes to be defined here */
-        require('./routes/auth')(app);
+        require('./routes/user')(app);
         require('./routes/meetup')(app);
     })();
 
     process.on('SIGINT', function () {
         mongoose.connection.close(function () {
-            console.log("### Connection to otomashen database closed - API Terminated SIGINT!");
+            console.log("### Connection to meetup database closed - API Terminated SIGINT!");
             process.exit(0);
         });
     });

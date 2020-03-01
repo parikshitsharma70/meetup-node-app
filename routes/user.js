@@ -110,4 +110,85 @@ module.exports = function(app){
                 }
             }
     })
+    
+    app.post('/user/addFriend', [
+        check('username')
+            .not()
+            .isEmpty(),
+        check('addUsername')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            try{
+                var addUsername = req.body.addUsername
+                var username = req.body.username
+                var addedUser = await User.findOne({'username': addUsername}).exec()
+                var user = await User.findOne({'username' : username}).exec()
+                if(!user || !addedUser) res.status(422).json({'message' : 'User is not registered'})
+                addedUser.requestsReceived.push(username)
+                addedUser.save()
+                user.requestsSent.push(addUsername)
+                user.save()
+                res.status(200).json({'message': 'Request has been sent'})
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+
+        })
+
+    app.post('/user/respondRequest', [
+        check('username')
+            .not()
+            .isEmpty(),
+        check('addUsername')
+            .not()
+            .isEmpty(),
+        check('response')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            try{
+                var addUsername = req.body.addUsername
+                var username = req.body.username
+                var response = req.body.response
+                var addedUser = await User.findOne({'username': addUsername}).exec()
+                var user = await User.findOne({'username' : username}).exec()
+                if(!user || !addedUser) res.status(422).json({'message' : 'User is not registered'})
+                else{
+                    if(response == "Yes"){
+                        var username_index = addedUser.requestsSent.indexOf(username)
+                        addedUser.requestsSent.splice(username_index, 1)
+                        addedUser.friends.push(username)
+                        addedUser.save()
+                        var addedusername_index = user.requestsReceived.indexOf(addUsername)
+                        user.requestsReceived.splice(addedusername_index, 1)
+                        user.friends.push(addUsername)
+                        user.save()
+                    }
+                    else if(response == "No"){
+                        var username_index = addedUser.requestsSent.indexOf(username)
+                        addedUser.requestsSent.splice(username_index, 1)
+                        addedUser.save()
+                        var addedusername_index = user.requestsReceived.indexOf(addUsername)
+                        user.requestsReceived.splice(addedusername_index, 1)
+                        user.save()
+                    }
+                res.status(200).json({'message': 'Response has been recorded'})
+                }
+            } catch(err){
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+
+        })
+
 }
