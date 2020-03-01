@@ -110,6 +110,63 @@ module.exports = function(app){
                 }
             }
     })
+
+    app.get('/user/listFriends', [
+        check('username')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            var username = req.body.username
+            try{
+                var friends = await User.findOne({username : username}, {friends : 1, _id : 0}).exec()
+                res.status(200).json({message : friends})            
+            } catch(err) {
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+    })
+
+    app.get('/user/listRequestsReceived', [
+        check('username')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            var username = req.body.username
+            try{
+                var requestsReceived = await User.findOne({username : username}, {requestsReceived : 1, _id : 0}).exec()
+                res.status(200).json({message : requestsReceived})            
+            } catch(err) {
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+    })
+
+    app.get('/user/listRequestsSent', [
+        check('username')
+            .not()
+            .isEmpty()
+        ], async(req, res)=>{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(422).json({ errors: errors.array() });
+            }
+            var username = req.body.username
+            try{
+                var requestsSent = await User.findOne({username : username}, {requestsSent : 1, _id : 0}).exec()
+                res.status(200).json({message : requestsSent})            
+            } catch(err) {
+                console.log(err)
+                res.status(500).json({'message' : 'Server error'})
+            }
+    })
     
     app.post('/user/addFriend', [
         check('username')

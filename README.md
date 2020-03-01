@@ -1,8 +1,8 @@
 # Meetup Internal API Docs
 
-All routes are protected by jwt which can be obtained from /client/login or /admin/login
-Client jwt gives access to /client and /meetup endpoints
-Admin jwt gives access to /admin endpoints
+All routes are protected by jwt which can be obtained from /user/login or /admin/login
+User jwt gives access to /user/* and /meetup/* endpoints
+Admin jwt gives access to /admin/* endpoints
 
 
 # User
@@ -28,7 +28,50 @@ Admin jwt gives access to /admin endpoints
             - password as req.body.password
 
         Receive : 
-            Login success message and JWT 
+            Login success message and JWT
+
+## - /user/listFriends
+    GET
+        Send :
+            - username as req.body.username
+
+        Receive : 
+            List of friends of user
+
+## - /user/listRequestsReceived
+    GET
+        Send :
+            - username as req.body.username
+
+        Receive : 
+            List of friend requests received by user
+
+## - /user/listRequestsSent
+    GET
+        Send :
+            - username as req.body.username
+
+        Receive : 
+            List of friend requests sent by user
+
+## - /user/addFriend
+    POST
+        Send :
+            - username as req.body.username
+            - addUsername as req.body.addUsername
+
+        Receive : 
+            Confirmation for friend request sent
+
+## - /user/respondRequest
+    POST
+        Send :
+            - username as req.body.username
+            - addUsername as req.body.addUsername
+            - response as req.body.response
+
+        Receive : 
+            Confirmation for response to request
 
 # Meetup
 
